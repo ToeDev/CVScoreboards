@@ -1,0 +1,17 @@
+name: CVScoreboards
+main: org.cubeville.cvscoreboards.CVScoreboards
+author: ToeMan_
+version: 0.1
+api-version: 1.18
+depend: [CVTools]
+softdepend: [BetonQuest]
+
+commands:
+  cvscoreboards:
+    aliases: sidebar
+    permission: cvscoreboards.admin
+
+permissions:
+  cvscoreboards.admin:
+    description: Gives player access to every CVScoreboards command
+    default: op
