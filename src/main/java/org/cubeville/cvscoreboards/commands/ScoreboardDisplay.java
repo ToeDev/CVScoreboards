@@ -70,9 +70,10 @@ public class ScoreboardDisplay extends BaseCommand {
         //TODO show scoreboard
         org.bukkit.scoreboard.ScoreboardManager sMan = Bukkit.getScoreboardManager();
         Scoreboard s = sMan.getNewScoreboard();
-        s.registerNewTeam(scoreboard.getScoreboardTitle());
+        //s.registerNewTeam(scoreboard.getScoreboardTitle());
         for(Integer slot : scoreboard.getScoreboardRows().keySet()) {
-            Objective o = s.registerNewObjective("test", "dummy");
+            Objective o = s.registerNewObjective("test", "dummy", scoreboard.getScoreboardTitle());
+            o.setDisplayName(scoreboard.getScoreboardTitle());
             o.setDisplaySlot(DisplaySlot.SIDEBAR);
             o.getScore(scoreboard.getScoreboardRows().get(slot)).setScore(slot);
         }
