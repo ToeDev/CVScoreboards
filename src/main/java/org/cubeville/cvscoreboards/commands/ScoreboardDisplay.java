@@ -4,9 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 import org.cubeville.commons.commands.*;
 import org.cubeville.cvscoreboards.CVScoreboards;
 import org.cubeville.cvscoreboards.scoreboard.ScoreboardContainer;
@@ -70,12 +68,15 @@ public class ScoreboardDisplay extends BaseCommand {
         //TODO show scoreboard
         org.bukkit.scoreboard.ScoreboardManager sMan = Bukkit.getScoreboardManager();
         Scoreboard s = sMan.getNewScoreboard();
-        //s.registerNewTeam(scoreboard.getScoreboardTitle());
         for(Integer slot : scoreboard.getScoreboardRows().keySet()) {
-            Objective o = s.registerNewObjective("test", "dummy", scoreboard.getScoreboardTitle());
-            o.setDisplayName(scoreboard.getScoreboardTitle());
+            Objective o = s.registerNewObjective("test", "dummy");
+            //o.setDisplayName(scoreboard.getScoreboardTitle());
             o.setDisplaySlot(DisplaySlot.SIDEBAR);
-            o.getScore(scoreboard.getScoreboardRows().get(slot)).setScore(slot);
+            Team t = s.registerNewTeam(scoreboard.getScoreboardRows().get(slot) + scoreboard.getScoreboardTitle());
+            t.addEntry("");
+            t.setPrefix(scoreboard.getScoreboardRows().get(slot));
+            Score score = o.getScore(scoreboard.getScoreboardRows().get(slot) + scoreboard.getScoreboardTitle());
+            score.setScore(slot);
         }
         ((Player) sender).setScoreboard(s);
         return new CommandResponse(ChatColor.GREEN + "Scoreboard " + ChatColor.GOLD + name + ChatColor.GREEN + " opened");
