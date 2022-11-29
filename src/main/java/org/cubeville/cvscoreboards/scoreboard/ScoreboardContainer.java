@@ -1,5 +1,6 @@
 package org.cubeville.cvscoreboards.scoreboard;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -31,8 +32,12 @@ public class ScoreboardContainer implements ConfigurationSerializable {
         this.scoreboardRows = rows;
     }
 
-    public String getScoreboardTitle() {
+    public String getScoreboardTitleWithColors() {
         return this.scoreboardTitle;
+    }
+
+    public String getScoreboardTitleWithoutColors() {
+        return ChatColor.stripColor(this.getScoreboardTitleWithColors());
     }
 
     public TreeMap<Integer, String> getScoreboardRows() {

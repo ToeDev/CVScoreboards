@@ -34,8 +34,7 @@ public class ScoreboardList extends BaseCommand {
             int i = scoreboards.size();
             for (String scoreboard : scoreboards) {
                 TextComponent s = new TextComponent(scoreboard);
-                s.setColor(ChatColor.GOLD);
-                s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/cvscoreboards display " + scoreboard + " duration:5"));
+                s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/cvscoreboards display " + "\"" + ChatColor.stripColor(scoreboard) + "\"" + " duration:5"));
                 s.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Display " + scoreboard)));
                 i--;
                 if(i >= 1) s.addExtra(ChatColor.BLUE + " || ");

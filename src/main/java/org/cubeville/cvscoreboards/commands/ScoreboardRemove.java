@@ -7,6 +7,7 @@ import org.cubeville.commons.commands.CommandExecutionException;
 import org.cubeville.commons.commands.CommandParameterString;
 import org.cubeville.commons.commands.CommandResponse;
 import org.cubeville.cvscoreboards.CVScoreboards;
+import org.cubeville.cvscoreboards.scoreboard.ScoreboardContainer;
 import org.cubeville.cvscoreboards.scoreboard.ScoreboardManager;
 
 import java.util.List;
@@ -28,11 +29,12 @@ public class ScoreboardRemove extends Command {
 
     @Override
     public CommandResponse execute(Player player, Set<String> flags, Map<String, Object> parameters, List<Object> baseParameters) throws CommandExecutionException {
-        String name = (String) baseParameters.get(0);
+        String name = ChatColor.translateAlternateColorCodes('&', (String) baseParameters.get(0));
         if(this.scoreboardManager.scoreboardExists(name)) {
+            ScoreboardContainer scoreboard = this.scoreboardManager.getScoreboard(name);
             this.scoreboardManager.removeScoreboard(name);
             this.plugin.saveScoreboardManager();
-            return new CommandResponse(ChatColor.GREEN + "Scoreboard " + ChatColor.GOLD + name + ChatColor.GREEN + " removed!");
+            return new CommandResponse(ChatColor.GREEN + "Scoreboard " + ChatColor.GOLD + scoreboard.getScoreboardTitleWithColors() + ChatColor.GREEN + " removed!");
         } else {
             throw new CommandExecutionException(ChatColor.RED + "Scoreboard " + ChatColor.GOLD + baseParameters.get(0) + ChatColor.RED + " doesn't exist!");
         }
