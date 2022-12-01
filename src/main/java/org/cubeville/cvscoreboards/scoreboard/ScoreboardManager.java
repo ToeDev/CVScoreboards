@@ -189,29 +189,23 @@ public class ScoreboardManager implements ConfigurationSerializable {
     }
 
     public void showScoreboard(String name, Player player) {
-        ScoreboardContainer sC = this.scoreboards.get(name);
-        if(sC == null) {
-            for(ScoreboardContainer s : this.scoreboards.values()) {
-                if(s.getScoreboardTitleWithoutColors().equals(ChatColor.stripColor(name))) {
-                    sC = s;
-                }
-            }
-        }
-        if(sC != null) {
-            org.bukkit.scoreboard.ScoreboardManager sMan = Bukkit.getScoreboardManager();
-            Scoreboard s = sMan.getNewScoreboard();
-            Objective o = s.registerNewObjective("sidebar", "", sC.getScoreboardTitleWithColors());
-            o.setDisplaySlot(DisplaySlot.SIDEBAR);
-            o.setDisplayName(sC.getScoreboardTitleWithColors());
-            for(Integer slot : sC.getScoreboardRows().keySet()) {
-                Objective oL = s.getObjective("sidebar");
-                String row = sC.getScoreboardRows().get(slot);
+        ScoreboardContainer sC = new ScoreboardContainer(this.scoreboards.get(name).getScoreboardTitleWithColors(), new TreeMap<>());
+        org.bukkit.scoreboard.ScoreboardManager sMan = Bukkit.getScoreboardManager();
+        Scoreboard s = sMan.getNewScoreboard();
+        Objective o = s.registerNewObjective("sidebar", "", sC.getScoreboardTitleWithColors());
+        o.setDisplaySlot(DisplaySlot.SIDEBAR);
+        o.setDisplayName(sC.getScoreboardTitleWithColors());
+        for(Integer slot : this.scoreboards.get(name).getScoreboardRows().keySet()) {
+            Objective oL = s.getObjective("sidebar");
+            String row = this.scoreboards.get(name).getScoreboardRows().get(slot);
+            if(plugin.isPapiEnabled()) {
                 row = plugin.parsePAPI(player, row);
-                oL.getScore(row).setScore(slot);
             }
-            player.setScoreboard(s);
-            this.setPlayerScoreboard(sC, player);
+            oL.getScore(row).setScore(slot);
+            sC.getScoreboardRows().put(slot, row);
         }
+        player.setScoreboard(s);
+        this.setPlayerScoreboard(sC, player);
     }
 
     public void hideScoreboard(Player player) {

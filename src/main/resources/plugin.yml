@@ -3,7 +3,8 @@ main: org.cubeville.cvscoreboards.CVScoreboards
 author: ToeMan_
 version: 0.1
 api-version: 1.18
-depend: [CVTools,PlaceholderAPI]
+depend: [CVTools]
+softdepend: [PlaceholderAPI]
 
 commands:
   cvscoreboards:

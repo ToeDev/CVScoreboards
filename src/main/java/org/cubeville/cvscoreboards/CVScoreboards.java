@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -31,10 +30,14 @@ public class CVScoreboards extends JavaPlugin implements Listener {
 
     private static CVScoreboards cvScoreboards;
     private PAPIHandler papiHandler;
+    public CVScoreboardsAPI cvScoreboardsAPI;
 
     private ScoreboardManager scoreboardManager;
     private CommandParser commandParser;
     private Logger logger;
+    private Integer papiUpdateDelay;
+
+    public boolean papiEnabled = false;
 
     public void onEnable() {
         this.logger = this.getLogger();
@@ -70,6 +73,9 @@ public class CVScoreboards extends JavaPlugin implements Listener {
         this.scoreboardManager = (ScoreboardManager) getConfig().get("ScoreboardManager");
         if(this.scoreboardManager == null) this.scoreboardManager = new ScoreboardManager();
         this.scoreboardManager.setScoreboardManager(this);
+        this.cvScoreboardsAPI = new CVScoreboardsAPI(this.scoreboardManager);
+
+        this.papiUpdateDelay = getConfig().getInt("PlaceholderAPI-Update-Delay", 1);
 
         this.commandParser = new CommandParser();
         this.commandParser.addCommand(new ScoreboardCreate(this, this.scoreboardManager));
@@ -83,7 +89,18 @@ public class CVScoreboards extends JavaPlugin implements Listener {
 
         Bukkit.getPluginManager().registerEvents(this, this);
         logger.info(ChatColor.LIGHT_PURPLE + "Plugin Enabled Successfully");
-        this.startPAPIUpdates();
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.papiEnabled = true;
+            this.startPAPIUpdates();
+        }
+    }
+
+    public CVScoreboardsAPI getCvScoreboardsAPI() {
+        return this.cvScoreboardsAPI;
+    }
+
+    public boolean isPapiEnabled() {
+        return this.papiEnabled;
     }
 
     public void saveScoreboardManager() {
@@ -113,26 +130,26 @@ public class CVScoreboards extends JavaPlugin implements Listener {
     }
 
     public void startPAPIUpdates() {
-        this.getServer().getScheduler().runTaskTimer(this, () -> {
-            Map<UUID, ScoreboardContainer> playerScoreboards = this.scoreboardManager.getAllPlayerScoreboards();
-            if(playerScoreboards != null && !playerScoreboards.isEmpty()) {
-                for(UUID uuid : playerScoreboards.keySet()) {
-                    Player player = Bukkit.getPlayer(uuid);
-                    if(player != null) {
-                        ScoreboardContainer playerScoreboard = playerScoreboards.get(uuid);
-                        for(Integer slot : playerScoreboard.getScoreboardRows().keySet()) {
-                            ScoreboardContainer defaultScoreboard = this.scoreboardManager.getScoreboard(playerScoreboard.getScoreboardTitleWithColors());
-                            String defaultRowValue = this.parsePAPI(player, defaultScoreboard.getScoreboardRows().get(slot));
-                            String playerRowValue = playerScoreboard.getScoreboardRows().get(slot);
-                            System.out.println(defaultRowValue);
-                            System.out.println(playerRowValue);
-                            if(!defaultRowValue.equals(playerRowValue)) {
-                                this.scoreboardManager.setScoreboardRow(defaultScoreboard.getScoreboardTitleWithColors(), slot, defaultRowValue);
-                            }
+        this.getServer().getScheduler().runTaskTimer(this, this::updatePAPI, 100L, this.papiUpdateDelay * 20L);
+    }
+
+    public void updatePAPI() {
+        Map<UUID, ScoreboardContainer> playerScoreboards = this.scoreboardManager.getAllPlayerScoreboards();
+        if(playerScoreboards != null && !playerScoreboards.isEmpty()) {
+            for(UUID uuid : playerScoreboards.keySet()) {
+                Player player = Bukkit.getPlayer(uuid);
+                if(player != null) {
+                    ScoreboardContainer playerScoreboard = playerScoreboards.get(uuid);
+                    for(Integer slot : playerScoreboard.getScoreboardRows().keySet()) {
+                        ScoreboardContainer defaultScoreboard = this.scoreboardManager.getScoreboard(playerScoreboard.getScoreboardTitleWithColors());
+                        String defaultRowValue = this.parsePAPI(player, defaultScoreboard.getScoreboardRows().get(slot));
+                        String playerRowValue = playerScoreboard.getScoreboardRows().get(slot);
+                        if(!defaultRowValue.equals(playerRowValue)) {
+                            this.scoreboardManager.showScoreboard(playerScoreboard.getScoreboardTitleWithColors(), player);
                         }
                     }
                 }
             }
-        }, 100L, 20L);
+        }
     }
 }
