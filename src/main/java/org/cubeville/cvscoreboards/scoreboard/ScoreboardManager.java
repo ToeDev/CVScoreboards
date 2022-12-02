@@ -208,6 +208,27 @@ public class ScoreboardManager implements ConfigurationSerializable {
         this.setPlayerScoreboard(sC, player);
     }
 
+    public void showPlayerSpecificScoreboard(Player player) {
+        ScoreboardContainer sC = new ScoreboardContainer(this.playerScoreboards.get(player.getUniqueId()).getScoreboardTitleWithColors(), new TreeMap<>());
+        sC.setPlayerSpecific(true);
+        org.bukkit.scoreboard.ScoreboardManager sMan = Bukkit.getScoreboardManager();
+        Scoreboard s = sMan.getNewScoreboard();
+        Objective o = s.registerNewObjective("sidebar", "", sC.getScoreboardTitleWithColors());
+        o.setDisplaySlot(DisplaySlot.SIDEBAR);
+        o.setDisplayName(sC.getScoreboardTitleWithColors());
+        for(Integer slot : this.playerScoreboards.get(player.getUniqueId()).getScoreboardRows().keySet()) {
+            Objective oL = s.getObjective("sidebar");
+            String row = this.playerScoreboards.get(player.getUniqueId()).getScoreboardRows().get(slot);
+            if(plugin.isPapiEnabled()) {
+                row = plugin.parsePAPI(player, row);
+            }
+            oL.getScore(row).setScore(slot);
+            sC.getScoreboardRows().put(slot, row);
+        }
+        player.setScoreboard(s);
+        this.setPlayerScoreboard(sC, player);
+    }
+
     public void hideScoreboard(Player player) {
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         this.removePlayerScoreboard(player);

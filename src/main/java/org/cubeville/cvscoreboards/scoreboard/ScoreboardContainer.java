@@ -12,11 +12,13 @@ import java.util.TreeMap;
 public class ScoreboardContainer implements ConfigurationSerializable {
 
     private String scoreboardTitle;
+    private boolean playerSpecific;
     private TreeMap<Integer, String> scoreboardRows;
 
     @SuppressWarnings("unchecked")
     public ScoreboardContainer(Map<String, Object> config) {
         this.scoreboardTitle = (String) config.get("title");
+        this.playerSpecific = false;
         this.scoreboardRows = new TreeMap<>((Map<Integer, String>) config.get("rows"));
     }
 
@@ -29,6 +31,7 @@ public class ScoreboardContainer implements ConfigurationSerializable {
 
     public ScoreboardContainer(String title, TreeMap<Integer, String> rows) {
         this.scoreboardTitle = title;
+        this.playerSpecific = false;
         this.scoreboardRows = rows;
     }
 
@@ -38,6 +41,14 @@ public class ScoreboardContainer implements ConfigurationSerializable {
 
     public String getScoreboardTitleWithoutColors() {
         return ChatColor.stripColor(this.getScoreboardTitleWithColors());
+    }
+
+    public boolean isPlayerSpecific() {
+        return this.playerSpecific;
+    }
+
+    public void setPlayerSpecific(boolean status) {
+        this.playerSpecific = status;
     }
 
     public TreeMap<Integer, String> getScoreboardRows() {

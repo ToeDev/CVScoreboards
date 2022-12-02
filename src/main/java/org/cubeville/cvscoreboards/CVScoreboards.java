@@ -140,12 +140,14 @@ public class CVScoreboards extends JavaPlugin implements Listener {
                 Player player = Bukkit.getPlayer(uuid);
                 if(player != null) {
                     ScoreboardContainer playerScoreboard = playerScoreboards.get(uuid);
-                    for(Integer slot : playerScoreboard.getScoreboardRows().keySet()) {
-                        ScoreboardContainer defaultScoreboard = this.scoreboardManager.getScoreboard(playerScoreboard.getScoreboardTitleWithColors());
-                        String defaultRowValue = this.parsePAPI(player, defaultScoreboard.getScoreboardRows().get(slot));
-                        String playerRowValue = playerScoreboard.getScoreboardRows().get(slot);
-                        if(!defaultRowValue.equals(playerRowValue)) {
-                            this.scoreboardManager.showScoreboard(playerScoreboard.getScoreboardTitleWithColors(), player);
+                    if(!playerScoreboard.isPlayerSpecific()) {
+                        for(Integer slot : playerScoreboard.getScoreboardRows().keySet()) {
+                            ScoreboardContainer defaultScoreboard = this.scoreboardManager.getScoreboard(playerScoreboard.getScoreboardTitleWithColors());
+                            String defaultRowValue = this.parsePAPI(player, defaultScoreboard.getScoreboardRows().get(slot));
+                            String playerRowValue = playerScoreboard.getScoreboardRows().get(slot);
+                            if(!defaultRowValue.equals(playerRowValue)) {
+                                this.scoreboardManager.showScoreboard(playerScoreboard.getScoreboardTitleWithColors(), player);
+                            }
                         }
                     }
                 }
