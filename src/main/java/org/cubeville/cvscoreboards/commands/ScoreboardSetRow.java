@@ -2,6 +2,7 @@ package org.cubeville.cvscoreboards.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.cubeville.commons.commands.*;
 import org.cubeville.cvscoreboards.CVScoreboards;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class ScoreboardSetRow extends Command {
+public class ScoreboardSetRow extends BaseCommand {
 
     private final CVScoreboards plugin;
     private final ScoreboardManager scoreboardManager;
@@ -30,7 +31,7 @@ public class ScoreboardSetRow extends Command {
     }
 
     @Override
-    public CommandResponse execute(Player player, Set<String> flags, Map<String, Object> parameters, List<Object> baseParameters) throws CommandExecutionException {
+    public CommandResponse execute(CommandSender sender, Set<String> flags, Map<String, Object> parameters, List<Object> baseParameters) throws CommandExecutionException {
         String name = ChatColor.translateAlternateColorCodes('&', (String) baseParameters.get(0));
         Integer slot = (Integer) baseParameters.get(1);
         String row = ChatColor.translateAlternateColorCodes('&', ((String) baseParameters.get(2)));
@@ -48,8 +49,8 @@ public class ScoreboardSetRow extends Command {
                             rows.put(slot, row);
                             sC.setScoreboardRows(rows);
                             sC.setPlayerSpecific(true);
-                            this.scoreboardManager.setPlayerScoreboard(sC, player);
-                            this.scoreboardManager.showPlayerSpecificScoreboard(player);
+                            this.scoreboardManager.setPlayerScoreboard(sC, p);
+                            this.scoreboardManager.showPlayerSpecificScoreboard(p);
                             return new CommandResponse(ChatColor.GREEN + "Scoreboard row added to " + ChatColor.GOLD +
                                     this.scoreboardManager.getScoreboard(name).getScoreboardTitleWithColors() + ChatColor.GREEN + " for player " +
                                     ChatColor.GOLD + p.getName() + ChatColor.GREEN + " only!");
