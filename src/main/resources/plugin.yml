@@ -1,8 +1,8 @@
 name: CVScoreboards
 main: org.cubeville.cvscoreboards.CVScoreboards
 author: ToeMan_
-version: 0.1
-api-version: 1.18
+version: 1.20
+api-version: 1.20
 depend: [CVTools]
 softdepend: [PlaceholderAPI]
 
